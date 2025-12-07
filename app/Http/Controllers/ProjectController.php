@@ -58,28 +58,14 @@ class ProjectController extends Controller
             'completed_at' => 'nullable|date',
         ]);
 
-        if( !isset($validated['image_url']) || empty($validated['image_url']) ) {
+        // Handle image upload
+        if ($request->hasFile('image_url')) {
+            $file = $request->file('image_url');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = $file->storeAs('public/projects', $filename);
+            $validated['image_url'] = '/storage/projects/' . $filename;
+        } else {
             $validated['image_url'] = null;
-        }
-
-        if($validated['image_url'] !== null)
-        {
-            // Upload image
-            $imagePath = str_replace('/storage/', '', $validated['image_url']);
-            if (file_exists(storage_path('app/public/' . $imagePath))) {
-                // Image already in storage, do nothing
-            } else {
-                // Move image from temp to permanent location
-                $tempPath = str_replace('/storage/temp/', '', $validated['image_url']);
-                if (file_exists(storage_path('app/public/temp/' . $tempPath))) {
-                    $newPath = 'projects/' . basename($tempPath);
-                    \Illuminate\Support\Facades\Storage::move('public/temp/' . $tempPath, 'public/' . $newPath);
-                    $validated['image_url'] = '/storage/' . $newPath;
-                } else {
-                    // Temp image doesn't exist, set to null
-                    $validated['image_url'] = null;
-                }
-            }
         }
         
         \App\Models\Project::create($validated);
@@ -146,26 +132,22 @@ class ProjectController extends Controller
             'completed_at' => 'nullable|date',
         ]);
 
-        if(isset($validated['image_url']) && !empty($validated['image_url']))
-        {
-            // Upload image
-            $imagePath = str_replace('/storage/', '', $validated['image_url']);
-            if (file_exists(storage_path('app/public/' . $imagePath))) {
-                // Image already in storage, do nothing
-            } else {
-                // Move image from temp to permanent location
-                $tempPath = str_replace('/storage/temp/', '', $validated['image_url']);
-                if (file_exists(storage_path('app/public/temp/' . $tempPath))) {
-                    $newPath = 'projects/' . basename($tempPath);
-                    \Illuminate\Support\Facades\Storage::move('public/temp/' . $tempPath, 'public/' . $newPath);
-                    $validated['image_url'] = '/storage/' . $newPath;
-                } else {
-                    // Temp image doesn't exist, set to null
-                    $validated['image_url'] = null;
-                }
+        // Handle image upload
+        if ($request->hasFile('image_url')) {
+            // Delete old image if exists
+            if ($project->image_url) {
+                $oldPath = str_replace('/storage/', 'public/', $project->image_url);
+                \Illuminate\Support\Facades\Storage::delete($oldPath);
             }
+            
+            // Upload new image
+            $file = $request->file('image_url');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = $file->storeAs('public/projects', $filename);
+            $validated['image_url'] = '/storage/projects/' . $filename;
         } else {
-            $validated['image_url'] = $project->image_url; // Keep existing image if none uploaded
+            // Keep existing image if no new file uploaded
+            $validated['image_url'] = $project->image_url;
         }
         
         $project->update($validated);

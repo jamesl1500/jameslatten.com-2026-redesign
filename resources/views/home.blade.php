@@ -114,6 +114,34 @@
                 <div class="section-label">Portfolio</div>
                 <h2 class="section-title">Featured Work</h2>
             </div>
+            <div class="projects-grid">
+                @php
+                    $featuredProjects = \App\Models\Project::where('is_featured', true)
+                        ->orderBy('created_at', 'desc')
+                        ->take(3)
+                        ->get();
+                @endphp
+                @if($featuredProjects->count() > 0)
+                    @foreach($featuredProjects as $project)
+                    <a href="{{ route('portfolio.show', $project->slug ?? $project->id) }}" class="portfolio-card">
+                        @if($project->image_url)
+                        <div class="project-image">
+                            <img src="{{ asset($project->image_url) }}" alt="{{ $project->title }}">
+                        </div>
+                        @endif
+                        <div class="project-info">
+                            <h3 class="project-title">{{ $project->title }}</h3>
+                            <p class="project-description">{{ Str::limit($project->description, 100) }}</p>
+                            <span class="project-link">View Project →</span>
+                        </div>
+                    </a>
+                    @endforeach
+                @else
+                    <div class="projects-placeholder">
+                        <p>Featured projects will be displayed here once added through the admin panel.</p>
+                    </div>
+                @endif
+            </div>
             
             <div class="section-cta">
                 <a href="{{ route('portfolio.index') }}" class="btn btn-primary">View All Projects</a>
