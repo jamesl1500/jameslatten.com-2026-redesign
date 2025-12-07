@@ -23,7 +23,7 @@ class ContactController extends Controller
         ]);
         
         // Send email or save to database
-        Mail::to('hello@example.com')->send(new ContactFormMail($validated));
+        Mail::to('hello@jameslatten.com')->send(new ContactFormMail($validated));
         
         return redirect()->route('contact')->with('success', 'Thank you for your message! I will get back to you soon.');
     }
