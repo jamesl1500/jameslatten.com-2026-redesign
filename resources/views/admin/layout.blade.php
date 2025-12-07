@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Admin Panel')</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/scss/app.scss', 'resources/js/app.js'])
     <style>
         * {
             margin: 0;
@@ -13,10 +13,10 @@
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-family: 'NeueMontreal', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             line-height: 1.6;
             color: #333;
-            background: #f8f9fa;
+            background: #fafafa;
         }
         
         .admin-layout {
@@ -25,94 +25,134 @@
         }
         
         .sidebar {
-            width: 250px;
-            background: #1f2937;
+            width: 280px;
+            background: #000;
             color: white;
-            padding: 2rem 0;
+            padding: 0;
             position: fixed;
             height: 100vh;
             overflow-y: auto;
+            border-right: 1px solid #222;
         }
         
         .sidebar-header {
-            padding: 0 1.5rem;
-            margin-bottom: 2rem;
+            padding: 2.5rem 2rem;
+            border-bottom: 1px solid #222;
+            background: #000;
         }
         
         .sidebar-header h2 {
             color: #fff;
             font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        
+        .sidebar-header p {
+            color: #999;
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
         }
         
         .sidebar-nav {
             list-style: none;
+            padding: 1rem 0;
         }
         
         .sidebar-nav a {
-            display: block;
-            padding: 0.75rem 1.5rem;
-            color: #d1d5db;
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            color: #999;
             text-decoration: none;
-            transition: all 0.3s;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+            font-weight: 500;
+            border-left: 3px solid transparent;
         }
         
-        .sidebar-nav a:hover,
-        .sidebar-nav a.active {
-            background: #374151;
+        .sidebar-nav a:hover {
+            background: #111;
             color: #fff;
-            border-left: 3px solid #2563eb;
+            border-left-color: #fff;
+        }
+        
+        .sidebar-nav a.active {
+            background: #111;
+            color: #fff;
+            border-left-color: #fff;
+        }
+        
+        .sidebar-nav a span {
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
         }
         
         .main-content {
             flex: 1;
-            margin-left: 250px;
-            padding: 2rem;
+            margin-left: 280px;
+            padding: 0;
+            background: #fafafa;
         }
         
         .admin-header {
-            background: white;
-            padding: 1rem 2rem;
-            margin: -2rem -2rem 2rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background: #fff;
+            padding: 2rem 3rem;
+            border-bottom: 1px solid #e0e0e0;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
         
         .admin-header h1 {
-            color: #1f2937;
-            font-size: 1.75rem;
+            color: #000;
+            font-size: 2rem;
+            font-weight: 700;
         }
         
         .admin-user {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 1.5rem;
+        }
+        
+        .admin-user span {
+            color: #666;
+            font-size: 0.95rem;
+            font-weight: 500;
         }
         
         .btn {
             display: inline-block;
-            padding: 0.75rem 1.5rem;
-            background: #2563eb;
+            padding: 0.75rem 1.75rem;
+            background: #000;
             color: #fff;
             text-decoration: none;
-            border-radius: 0.5rem;
-            transition: background 0.3s;
+            transition: all 0.3s;
             border: none;
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            font-family: inherit;
         }
         
         .btn:hover {
-            background: #1d4ed8;
+            background: #333;
         }
         
         .btn-secondary {
-            background: #6b7280;
+            background: #fff;
+            color: #000;
+            border: 1px solid #e0e0e0;
         }
         
         .btn-secondary:hover {
-            background: #4b5563;
+            background: #f5f5f5;
+            border-color: #ccc;
         }
         
         .btn-danger {
@@ -124,30 +164,31 @@
         }
         
         .btn-sm {
-            padding: 0.5rem 1rem;
+            padding: 0.5rem 1.25rem;
             font-size: 0.875rem;
         }
         
         .alert {
-            padding: 1rem;
-            border-radius: 0.5rem;
-            margin-bottom: 1.5rem;
+            padding: 1.25rem 1.5rem;
+            margin: 2rem 3rem;
+            border-left: 4px solid;
         }
         
         .alert-success {
-            background: #d1fae5;
-            color: #065f46;
-            border: 1px solid #059669;
+            background: #f0fdf4;
+            color: #166534;
+            border-left-color: #16a34a;
         }
         
         .alert-error {
-            background: #fee2e2;
+            background: #fef2f2;
             color: #991b1b;
-            border: 1px solid #dc2626;
+            border-left-color: #dc2626;
         }
         
         .card {
-            background: white;
+            background: #fff;
+            border: 1px solid #e0e0e0;
             padding: 2rem;
             border-radius: 0.5rem;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -279,15 +320,16 @@
         <aside class="sidebar">
             <div class="sidebar-header">
                 <h2>Admin Panel</h2>
+                <p>Content Management</p>
             </div>
             <ul class="sidebar-nav">
-                <li><a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">📊 Dashboard</a></li>
-                <li><a href="{{ route('admin.blog-posts.index') }}" class="{{ request()->routeIs('admin.blog-posts.*') ? 'active' : '' }}">📝 Blog Posts</a></li>
-                <li><a href="{{ route('admin.projects.index') }}" class="{{ request()->routeIs('admin.projects.*') ? 'active' : '' }}">💼 Projects</a></li>
-                <li><a href="{{ route('admin.experiences.index') }}" class="{{ request()->routeIs('admin.experiences.*') ? 'active' : '' }}">💻 Experience</a></li>
-                <li><a href="{{ route('admin.education.index') }}" class="{{ request()->routeIs('admin.education.*') ? 'active' : '' }}">🎓 Education</a></li>
-                <li><a href="{{ route('admin.certificates.index') }}" class="{{ request()->routeIs('admin.certificates.*') ? 'active' : '' }}">🏆 Certificates</a></li>
-                <li><a href="{{ route('home') }}" target="_blank">🌐 View Site</a></li>
+                <li><a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"><span>📊</span> Dashboard</a></li>
+                <li><a href="{{ route('admin.blog-posts.index') }}" class="{{ request()->routeIs('admin.blog-posts.*') ? 'active' : '' }}"><span>📝</span> Blog Posts</a></li>
+                <li><a href="{{ route('admin.projects.index') }}" class="{{ request()->routeIs('admin.projects.*') ? 'active' : '' }}"><span>💼</span> Projects</a></li>
+                <li><a href="{{ route('admin.experiences.index') }}" class="{{ request()->routeIs('admin.experiences.*') ? 'active' : '' }}"><span>💻</span> Experience</a></li>
+                <li><a href="{{ route('admin.education.index') }}" class="{{ request()->routeIs('admin.education.*') ? 'active' : '' }}"><span>🎓</span> Education</a></li>
+                <li><a href="{{ route('admin.certificates.index') }}" class="{{ request()->routeIs('admin.certificates.*') ? 'active' : '' }}"><span>🏆</span> Certificates</a></li>
+                <li><a href="{{ route('home') }}" target="_blank"><span>🌐</span> View Site</a></li>
             </ul>
         </aside>
 
