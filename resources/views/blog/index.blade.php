@@ -3,156 +3,108 @@
 @section('title', 'Blog - James Latten')
 
 @section('content')
-<style>
-    .page-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 4rem 2rem;
-        text-align: center;
-    }
-    
-    .page-header h1 {
-        font-size: 2.5rem;
-        margin-bottom: 1rem;
-    }
-    
-    .blog-list {
-        max-width: 800px;
-        margin: 0 auto;
-    }
-    
-    .blog-card {
-        background: white;
-        padding: 2rem;
-        border-radius: 0.5rem;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        margin-bottom: 2rem;
-        transition: transform 0.3s;
-    }
-    
-    .blog-card:hover {
-        transform: translateY(-3px);
-    }
-    
-    .blog-card h2 {
-        color: #1f2937;
-        margin-bottom: 0.5rem;
-        font-size: 1.5rem;
-    }
-    
-    .blog-card h2 a {
-        color: #1f2937;
-        text-decoration: none;
-    }
-    
-    .blog-card h2 a:hover {
-        color: #2563eb;
-    }
-    
-    .blog-meta {
-        color: #6b7280;
-        font-size: 0.875rem;
-        margin-bottom: 1rem;
-    }
-    
-    .blog-excerpt {
-        color: #374151;
-        line-height: 1.6;
-        margin-bottom: 1rem;
-    }
-    
-    .read-more {
-        color: #2563eb;
-        text-decoration: none;
-        font-weight: 500;
-    }
-    
-    .read-more:hover {
-        text-decoration: underline;
-    }
-    
-    .pagination {
-        display: flex;
-        justify-content: center;
-        gap: 0.5rem;
-        margin-top: 2rem;
-    }
-    
-    .pagination a,
-    .pagination span {
-        padding: 0.5rem 1rem;
-        background: white;
-        border-radius: 0.25rem;
-        text-decoration: none;
-        color: #374151;
-    }
-    
-    .pagination a:hover {
-        background: #2563eb;
-        color: white;
-    }
-    
-    .pagination .active {
-        background: #2563eb;
-        color: white;
-    }
-</style>
+<!-- Blog Hero Section -->
+<section class="page-hero-section">
+    <div class="container">
+        <div class="page-hero-content">
+            <div class="section-label">Blog</div>
+            <h1 class="page-hero-title">Insights & Articles</h1>
+            <p class="page-hero-subtitle">
+                Explore my latest thoughts, tutorials, and industry insights on web development, 
+                programming, and technology trends.
+            </p>
+        </div>
+    </div>
+</section>
 
-<div class="page-header">
-    <h1>Blog</h1>
-    <p>Thoughts, tutorials, and insights on web development</p>
-</div>
-
-<div class="container">
-    <div class="blog-list">
-        @forelse($posts as $post)
-            <article class="blog-card">
-                <h2><a href="{{ route('blog.show', $post->id) }}">{{ $post->title ?? 'Blog Post Title' }}</a></h2>
-                <div class="blog-meta">
-                    Published on {{ $post->published_at ? $post->published_at->format('F j, Y') : ($post->created_at ? $post->created_at->format('F j, Y') : 'Recently') }}
-                    @if($post->read_time)
-                        • {{ $post->read_time }} min read
-                    @endif
-                </div>
-                <div class="blog-excerpt">
-                    {{ $post->excerpt ?? Str::limit($post->content ?? 'Blog post excerpt goes here...', 200) }}
-                </div>
-                <a href="{{ route('blog.show', $post->id) }}" class="read-more">Read More →</a>
-            </article>
-        @empty
-            <article class="blog-card">
-                <h2><a href="#">Getting Started with Laravel 11</a></h2>
-                <div class="blog-meta">Published on December 1, 2025 • 5 min read</div>
-                <div class="blog-excerpt">
-                    Laravel 11 brings exciting new features and improvements. In this post, we'll explore the key changes and how to migrate your existing applications.
-                </div>
-                <a href="#" class="read-more">Read More →</a>
-            </article>
+<!-- Blog Grid Section -->
+<section class="blog-grid-section">
+    <div class="container">
+        @if($posts->count() > 0)
+            <div class="blog-grid">
+                @foreach($posts as $post)
+                    <a href="{{ route('blog.show', $post->id) }}" class="blog-card-link">
+                        <article class="blog-card">
+                            <div class="blog-card-header">
+                                <div class="blog-meta">
+                                    <span class="blog-date">{{ $post->published_at?->format('M j, Y') ?? $post->created_at->format('M j, Y') }}</span>
+                                    @if($post->read_time)
+                                        <span class="blog-separator">•</span>
+                                        <span class="blog-read-time">{{ $post->read_time }} min read</span>
+                                    @endif
+                                </div>
+                            </div>
+                            
+                            <h2 class="blog-card-title">{{ $post->title }}</h2>
+                            
+                            @if($post->excerpt)
+                                <p class="blog-card-excerpt">{{ Str::limit($post->excerpt, 150) }}</p>
+                            @endif
+                            
+                            @if($post->tags)
+                                <div class="blog-card-tags">
+                                    @foreach(array_slice(explode(',', $post->tags), 0, 3) as $tag)
+                                        <span class="blog-tag">{{ trim($tag) }}</span>
+                                    @endforeach
+                                </div>
+                            @endif
+                            
+                            <div class="blog-card-footer">
+                                <span class="blog-link-arrow">Read Article →</span>
+                            </div>
+                        </article>
+                    </a>
+                @endforeach
+            </div>
             
-            <article class="blog-card">
-                <h2><a href="#">Building Modern UIs with Tailwind CSS</a></h2>
-                <div class="blog-meta">Published on November 28, 2025 • 7 min read</div>
-                <div class="blog-excerpt">
-                    Tailwind CSS has revolutionized the way we build user interfaces. Learn best practices and advanced techniques for creating beautiful, responsive designs.
+            @if($posts->hasPages())
+                <div class="blog-pagination">
+                    {{ $posts->links() }}
                 </div>
-                <a href="#" class="read-more">Read More →</a>
-            </article>
-            
-            <article class="blog-card">
-                <h2><a href="#">API Design Best Practices</a></h2>
-                <div class="blog-meta">Published on November 20, 2025 • 10 min read</div>
-                <div class="blog-excerpt">
-                    Designing a great API requires careful planning and consideration. Discover the principles that make APIs intuitive, scalable, and developer-friendly.
-                </div>
-                <a href="#" class="read-more">Read More →</a>
-            </article>
-        @endforelse
-        
-        @if(method_exists($posts, 'links'))
-            <div class="pagination">
-                {{ $posts->links() }}
+            @endif
+        @else
+            <div class="blog-empty">
+                <div class="empty-icon">📝</div>
+                <h3>No Blog Posts Yet</h3>
+                <p>Check back soon for new articles and insights!</p>
             </div>
         @endif
     </div>
-</div>
+</section>
+
+<!-- Blog Stats Section -->
+<section class="page-stats-section">
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-number">{{ \App\Models\BlogPosts::where('published', true)->count() }}</div>
+                <div class="stat-label">Articles Published</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">{{ \App\Models\BlogPosts::where('published', true)->avg('read_time') ? number_format(\App\Models\BlogPosts::where('published', true)->avg('read_time')) : 0 }}</div>
+                <div class="stat-label">Avg. Read Time (min)</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">{{ \App\Models\BlogPosts::where('published', true)->distinct('tags')->count('tags') }}</div>
+                <div class="stat-label">Topics Covered</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">Weekly</div>
+                <div class="stat-label">Publishing Schedule</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Blog CTA Section -->
+<section class="page-cta-section">
+    <div class="container">
+        <h2 class="cta-title">Want to Stay Updated?</h2>
+        <p class="cta-text">Subscribe to receive the latest articles and tutorials directly in your inbox.</p>
+        <div class="cta-buttons">
+            <a href="/contact" class="btn btn-primary">Get in Touch</a>
+            <a href="/portfolio" class="btn btn-secondary">View Portfolio</a>
+        </div>
+    </div>
+</section>
 @endsection

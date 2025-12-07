@@ -3,124 +3,148 @@
 @section('title', $post->title . ' - Blog')
 
 @section('content')
-<style>
-    .page-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 4rem 2rem;
-        text-align: center;
-    }
-    
-    .page-header h1 {
-        font-size: 2.5rem;
-        margin-bottom: 1rem;
-    }
-    
-    .blog-meta {
-        color: rgba(255,255,255,0.9);
-        font-size: 0.875rem;
-    }
-    
-    .blog-content {
-        background: white;
-        padding: 3rem;
-        border-radius: 0.5rem;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        max-width: 800px;
-        margin: 0 auto;
-    }
-    
-    .blog-content p {
-        line-height: 1.8;
-        color: #374151;
-        margin-bottom: 1.5rem;
-    }
-    
-    .blog-content h2,
-    .blog-content h3 {
-        color: #1f2937;
-        margin-top: 2rem;
-        margin-bottom: 1rem;
-    }
-    
-    .blog-content code {
-        background: #f3f4f6;
-        padding: 0.2rem 0.4rem;
-        border-radius: 0.25rem;
-        font-family: 'Courier New', monospace;
-        font-size: 0.9rem;
-    }
-    
-    .blog-content pre {
-        background: #1f2937;
-        color: #f9fafb;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        overflow-x: auto;
-        margin: 1.5rem 0;
-    }
-    
-    .blog-content pre code {
-        background: none;
-        padding: 0;
-        color: inherit;
-    }
-    
-    .back-link {
-        color: #2563eb;
-        text-decoration: none;
-        display: inline-block;
-        margin-bottom: 2rem;
-    }
-    
-    .back-link:hover {
-        text-decoration: underline;
-    }
-    
-    .blog-tags {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        margin-top: 2rem;
-        padding-top: 2rem;
-        border-top: 1px solid #e5e7eb;
-    }
-    
-    .tag {
-        background: #e0e7ff;
-        color: #3730a3;
-        padding: 0.25rem 0.75rem;
-        border-radius: 1rem;
-        font-size: 0.875rem;
-    }
-</style>
-
-<div class="page-header">
-    <h1>{{ $post->title ?? 'Blog Post Title' }}</h1>
-    <div class="blog-meta">
-        Published on {{ $post->published_at ? $post->published_at->format('F j, Y') : ($post->created_at ? $post->created_at->format('F j, Y') : 'Recently') }}
-        @if($post->author)
-            by {{ $post->author }}
-        @endif
-        @if($post->read_time)
-            • {{ $post->read_time }} min read
-        @endif
+<!-- Breadcrumb -->
+<div class="breadcrumb-container">
+    <div class="container">
+        <nav class="breadcrumb">
+            <a href="/">Home</a>
+            <span class="breadcrumb-separator">/</span>
+            <a href="{{ route('blog.index') }}">Blog</a>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-current">{{ Str::limit($post->title, 40) }}</span>
+        </nav>
     </div>
 </div>
 
-<div class="container">
-    <a href="{{ route('blog.index') }}" class="back-link">← Back to Blog</a>
-    
-    <article class="blog-content">
-        {!! nl2br(e($post->content ?? 'Blog post content goes here...')) !!}
-        
-        @if($post->tags)
-            <div class="blog-tags">
-                @foreach(explode(',', $post->tags) as $tag)
-                    <span class="tag">{{ trim($tag) }}</span>
-                @endforeach
+<!-- Blog Post Hero -->
+<section class="detail-hero-section">
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="/">Home</a>
+            <span class="breadcrumb-separator">/</span>
+            <a href="{{ route('blog.index') }}">Blog</a>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-current">{{ Str::limit($post->title, 40) }}</span>
+        </div>
+        <div class="detail-hero-content">
+            <h1 class="detail-hero-title">{{ $post->title }}</h1>
+            <div class="detail-hero-meta">
+                @if($post->author)
+                    <span class="meta-item">
+                        <strong>Author:</strong> {{ $post->author }}
+                    </span>
+                @endif
+                <span class="meta-item">
+                    <strong>Published:</strong> {{ $post->published_at?->format('F j, Y') ?? $post->created_at->format('F j, Y') }}
+                </span>
+                @if($post->read_time)
+                    <span class="meta-item">
+                        <strong>Read Time:</strong> {{ $post->read_time }} minutes
+                    </span>
+                @endif
             </div>
-        @endif
-    </article>
-</div>
+        </div>
+    </div>
+</section>
+
+<!-- Blog Post Content -->
+<section class="detail-content-section">
+    <div class="container">
+        <div class="detail-content-grid">
+            <div class="detail-main">
+                @if($post->excerpt)
+                    <div class="content-section">
+                        <p class="blog-excerpt-intro"><em>{{ $post->excerpt }}</em></p>
+                    </div>
+                @endif
+                
+                <div class="content-section">
+                    <div class="blog-content">
+                        {!! nl2br(e($post->content)) !!}
+                    </div>
+                </div>
+            </div>
+            
+            <aside class="detail-sidebar">
+                @if($post->tags)
+                    <div class="sidebar-section">
+                        <h3 class="sidebar-title">Tags</h3>
+                        <div class="sidebar-tags">
+                            @foreach(explode(',', $post->tags) as $tag)
+                                <span class="sidebar-tag">{{ trim($tag) }}</span>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+                
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">Share Article</h3>
+                    <div class="sidebar-share">
+                        <a href="https://twitter.com/intent/tweet?text={{ urlencode($post->title) }}&url={{ urlencode(request()->url()) }}" 
+                           target="_blank" 
+                           class="share-btn">
+                            Twitter
+                        </a>
+                        <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ urlencode(request()->url()) }}" 
+                           target="_blank" 
+                           class="share-btn">
+                            LinkedIn
+                        </a>
+                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(request()->url()) }}" 
+                           target="_blank" 
+                           class="share-btn">
+                            Facebook
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">Published</h3>
+                    <p class="sidebar-text">{{ $post->published_at?->format('F j, Y') ?? $post->created_at->format('F j, Y') }}</p>
+                </div>
+            </aside>
+        </div>
+    </div>
+</section>
+
+<!-- Related Posts Section -->
+@if(isset($relatedPosts) && $relatedPosts->count() > 0)
+<section class="related-section">
+    <div class="container">
+        <h2 class="section-title">Related Articles</h2>
+        <div class="related-grid">
+            @foreach($relatedPosts as $relatedPost)
+                <a href="{{ route('blog.show', $relatedPost->id) }}" class="related-card-link">
+                    <div class="related-card">
+                        <div class="related-card-header">
+                            <span class="related-date">{{ $relatedPost->published_at?->format('M j, Y') ?? $relatedPost->created_at->format('M j, Y') }}</span>
+                        </div>
+                        <h3 class="related-card-title">{{ $relatedPost->title }}</h3>
+                        @if($relatedPost->excerpt)
+                            <p class="related-card-excerpt">{{ Str::limit($relatedPost->excerpt, 100) }}</p>
+                        @endif
+                        @if($relatedPost->read_time)
+                            <div class="related-card-footer">
+                                <span class="related-read-time">{{ $relatedPost->read_time }} min read</span>
+                            </div>
+                        @endif
+                    </div>
+                </a>
+            @endforeach
+        </div>
+    </div>
+</section>
+@endif
+
+<!-- Detail CTA Section -->
+<section class="detail-cta-section">
+    <div class="container">
+        <h2 class="detail-cta-title">Interested in Working Together?</h2>
+        <p class="detail-cta-text">Let's discuss how I can help bring your project to life.</p>
+        <div class="detail-cta-buttons">
+            <a href="/contact" class="btn btn-primary">Get in Touch</a>
+            <a href="{{ route('blog.index') }}" class="btn btn-secondary">Read More Articles</a>
+        </div>
+    </div>
+</section>
 @endsection

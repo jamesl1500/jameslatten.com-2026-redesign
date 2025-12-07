@@ -62,7 +62,14 @@ class BlogPostsController extends Controller
     {
         $post = \App\Models\BlogPosts::where('published', true)->findOrFail($id);
         
-        return view('blog.show', compact('post'));
+        // Get related posts (random, excluding current)
+        $relatedPosts = \App\Models\BlogPosts::where('published', true)
+            ->where('id', '!=', $post->id)
+            ->inRandomOrder()
+            ->take(3)
+            ->get();
+        
+        return view('blog.show', compact('post', 'relatedPosts'));
     }
 
     /**

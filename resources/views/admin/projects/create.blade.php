@@ -9,7 +9,7 @@
         <a href="{{ route('admin.projects.index') }}" class="btn btn-secondary">Back to List</a>
     </div>
     
-    <form method="POST" action="{{ route('admin.projects.store') }}">
+    <form method="POST" action="{{ route('admin.projects.store') }}" enctype="multipart/form-data">
         @csrf
         
         <div class="form-group">
@@ -66,6 +66,12 @@
         <div class="form-group">
             <label for="github_url">GitHub URL</label>
             <input type="url" id="github_url" name="github_url" value="{{ old('github_url') }}">
+        </div>
+
+        <div class="form-group">
+            <label for="image_url">Image</label>
+            <input type="file" id="image_url" name="image_url" accept="image/*">
+            <small style="color: #6b7280;">Upload an image representing the project</small>
         </div>
         
         <div class="form-group">

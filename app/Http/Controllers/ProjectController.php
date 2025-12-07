@@ -51,11 +51,36 @@ class ProjectController extends Controller
             'status' => 'nullable|string|max:50',
             'demo_url' => 'nullable|url',
             'github_url' => 'nullable|url',
+            'image_url' => 'nullable|file|image|max:2048',
             'is_featured' => 'boolean',
             'is_published' => 'boolean',
             'order' => 'nullable|integer',
             'completed_at' => 'nullable|date',
         ]);
+
+        if( !isset($validated['image_url']) || empty($validated['image_url']) ) {
+            $validated['image_url'] = null;
+        }
+
+        if($validated['image_url'] !== null)
+        {
+            // Upload image
+            $imagePath = str_replace('/storage/', '', $validated['image_url']);
+            if (file_exists(storage_path('app/public/' . $imagePath))) {
+                // Image already in storage, do nothing
+            } else {
+                // Move image from temp to permanent location
+                $tempPath = str_replace('/storage/temp/', '', $validated['image_url']);
+                if (file_exists(storage_path('app/public/temp/' . $tempPath))) {
+                    $newPath = 'projects/' . basename($tempPath);
+                    \Illuminate\Support\Facades\Storage::move('public/temp/' . $tempPath, 'public/' . $newPath);
+                    $validated['image_url'] = '/storage/' . $newPath;
+                } else {
+                    // Temp image doesn't exist, set to null
+                    $validated['image_url'] = null;
+                }
+            }
+        }
         
         \App\Models\Project::create($validated);
         
@@ -65,11 +90,26 @@ class ProjectController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $slug)
     {
-        $project = \App\Models\Project::where('is_published', true)->findOrFail($id);
+        if (request()->is('admin/*')) {
+            $project = \App\Models\Project::where('slug', $slug)->firstOrFail();
+            return view('admin.projects.show', compact('project'));
+        }
         
-        return view('portfolio.show', compact('project'));
+        $project = \App\Models\Project::where('is_published', true)->where('slug', $slug)->firstOrFail();
+        
+        // Get related projects (same category or random, excluding current)
+        $relatedProjects = \App\Models\Project::where('is_published', true)
+            ->where('id', '!=', $project->id)
+            ->when($project->category, function($query) use ($project) {
+                return $query->where('category', $project->category);
+            })
+            ->orderBy('created_at', 'desc')
+            ->take(3)
+            ->get();
+        
+        return view('portfolio.show', compact('project', 'relatedProjects'));
     }
 
     /**
@@ -99,11 +139,34 @@ class ProjectController extends Controller
             'status' => 'nullable|string|max:50',
             'demo_url' => 'nullable|url',
             'github_url' => 'nullable|url',
+            'image_url' => 'nullable|file|image|max:2048',
             'is_featured' => 'boolean',
             'is_published' => 'boolean',
             'order' => 'nullable|integer',
             'completed_at' => 'nullable|date',
         ]);
+
+        if(isset($validated['image_url']) && !empty($validated['image_url']))
+        {
+            // Upload image
+            $imagePath = str_replace('/storage/', '', $validated['image_url']);
+            if (file_exists(storage_path('app/public/' . $imagePath))) {
+                // Image already in storage, do nothing
+            } else {
+                // Move image from temp to permanent location
+                $tempPath = str_replace('/storage/temp/', '', $validated['image_url']);
+                if (file_exists(storage_path('app/public/temp/' . $tempPath))) {
+                    $newPath = 'projects/' . basename($tempPath);
+                    \Illuminate\Support\Facades\Storage::move('public/temp/' . $tempPath, 'public/' . $newPath);
+                    $validated['image_url'] = '/storage/' . $newPath;
+                } else {
+                    // Temp image doesn't exist, set to null
+                    $validated['image_url'] = null;
+                }
+            }
+        } else {
+            $validated['image_url'] = $project->image_url; // Keep existing image if none uploaded
+        }
         
         $project->update($validated);
         

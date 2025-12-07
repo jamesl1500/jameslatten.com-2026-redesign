@@ -3,160 +3,103 @@
 @section('title', 'Portfolio - James Latten')
 
 @section('content')
-<style>
-    .page-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 4rem 2rem;
-        text-align: center;
-    }
-    
-    .page-header h1 {
-        font-size: 2.5rem;
-        margin-bottom: 1rem;
-    }
-    
-    .projects-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-        gap: 2rem;
-    }
-    
-    .project-card {
-        background: white;
-        border-radius: 0.5rem;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        overflow: hidden;
-        transition: transform 0.3s;
-    }
-    
-    .project-card:hover {
-        transform: translateY(-5px);
-    }
-    
-    .project-image {
-        width: 100%;
-        height: 200px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 3rem;
-    }
-    
-    .project-content {
-        padding: 1.5rem;
-    }
-    
-    .project-content h3 {
-        color: #1f2937;
-        margin-bottom: 0.5rem;
-        font-size: 1.25rem;
-    }
-    
-    .project-content p {
-        color: #6b7280;
-        margin-bottom: 1rem;
-    }
-    
-    .project-tags {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        margin-bottom: 1rem;
-    }
-    
-    .tag {
-        background: #e0e7ff;
-        color: #3730a3;
-        padding: 0.25rem 0.75rem;
-        border-radius: 1rem;
-        font-size: 0.875rem;
-    }
-    
-    .project-link {
-        display: inline-block;
-        color: #2563eb;
-        text-decoration: none;
-        font-weight: 500;
-    }
-    
-    .project-link:hover {
-        text-decoration: underline;
-    }
-</style>
-
-<div class="page-header">
-    <h1>My Portfolio</h1>
-    <p>Explore my recent projects and work</p>
-</div>
-
-<div class="container">
-    <div class="projects-grid">
-        @forelse($projects as $project)
-            <div class="project-card">
-                <div class="project-image">
-                    {{ $project->emoji ?? '💼' }}
-                </div>
-                <div class="project-content">
-                    <h3>{{ $project->title ?? 'Project Title' }}</h3>
-                    <p>{{ Str::limit($project->description ?? 'Project description goes here.', 120) }}</p>
-                    
-                    @if($project->technologies)
-                        <div class="project-tags">
-                            @foreach(explode(',', $project->technologies) as $tech)
-                                <span class="tag">{{ trim($tech) }}</span>
-                            @endforeach
-                        </div>
-                    @endif
-                    
-                    <a href="{{ route('portfolio.show', $project->id) }}" class="project-link">View Details →</a>
-                </div>
-            </div>
-        @empty
-            <div class="project-card">
-                <div class="project-image">🚀</div>
-                <div class="project-content">
-                    <h3>E-Commerce Platform</h3>
-                    <p>A full-featured e-commerce solution built with Laravel and Vue.js, handling thousands of daily transactions.</p>
-                    <div class="project-tags">
-                        <span class="tag">Laravel</span>
-                        <span class="tag">Vue.js</span>
-                        <span class="tag">MySQL</span>
-                    </div>
-                    <a href="#" class="project-link">View Details →</a>
-                </div>
-            </div>
-            
-            <div class="project-card">
-                <div class="project-image">📱</div>
-                <div class="project-content">
-                    <h3>Task Management App</h3>
-                    <p>A collaborative task management application with real-time updates and team collaboration features.</p>
-                    <div class="project-tags">
-                        <span class="tag">React</span>
-                        <span class="tag">Node.js</span>
-                        <span class="tag">MongoDB</span>
-                    </div>
-                    <a href="#" class="project-link">View Details →</a>
-                </div>
-            </div>
-            
-            <div class="project-card">
-                <div class="project-image">🎨</div>
-                <div class="project-content">
-                    <h3>Portfolio CMS</h3>
-                    <p>A headless CMS for managing portfolio content with an intuitive admin interface and API.</p>
-                    <div class="project-tags">
-                        <span class="tag">Laravel</span>
-                        <span class="tag">REST API</span>
-                        <span class="tag">Tailwind</span>
-                    </div>
-                    <a href="#" class="project-link">View Details →</a>
-                </div>
-            </div>
-        @endforelse
+<!-- Hero Section -->
+<section class="page-hero-section">
+    <div class="container">
+        <div class="page-hero-content">
+            <div class="section-label">Portfolio</div>
+            <h1 class="page-hero-title">Selected Works</h1>
+            <p class="page-hero-subtitle">
+                A showcase of projects that demonstrate my expertise in building scalable, 
+                user-centric applications and digital experiences.
+            </p>
+        </div>
     </div>
-</div>
+</section>
+
+<!-- Projects Grid Section -->
+<section class="portfolio-grid-section">
+    <div class="container">
+        <div class="portfolio-grid">
+            @forelse($projects as $project)
+                <a href="{{ route('portfolio.show', $project->slug ?? $project->id) }}" class="portfolio-card-link">
+                    <article class="portfolio-card">
+                        @if($project->image_url)
+                            <div class="portfolio-card-image">
+                                <img src="{{ $project->image_url }}" alt="{{ $project->title }}">
+                            </div>
+                        @else
+                            <div class="portfolio-card-placeholder">
+                                <span class="portfolio-emoji">{{ $project->emoji ?? '💼' }}</span>
+                            </div>
+                        @endif
+                        <div class="portfolio-card-content">
+                            <h2 class="portfolio-card-title">{{ $project->title }}</h2>
+                            <p class="portfolio-card-description">
+                                {{ Str::limit($project->description, 100) }}
+                            </p>
+                            @if($project->technologies)
+                                <div class="portfolio-card-tags">
+                                    @foreach(array_slice(explode(',', $project->technologies), 0, 3) as $tech)
+                                        <span class="portfolio-tag">{{ trim($tech) }}</span>
+                                    @endforeach
+                                </div>
+                            @endif
+                            <div class="portfolio-card-footer">
+                                <span class="portfolio-link-arrow">View Project →</span>
+                            </div>
+                        </div>
+                    </article>
+                </a>
+            @empty
+                <div class="portfolio-empty">
+                    <div class="empty-icon">💼</div>
+                    <h3>No Projects Added Yet</h3>
+                    <p>Portfolio projects will appear here once added through the admin panel.</p>
+                </div>
+            @endforelse
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="page-stats-section">
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-number">{{ $projects->count() ?: '50+' }}</div>
+                <div class="stat-label">Projects Completed</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">{{ date('Y') - 2021 }}+</div>
+                <div class="stat-label">Years of Experience</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">Client Satisfaction</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Support Available</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="page-cta-section">
+    <div class="container">
+        <div class="page-cta-content">
+            <h2 class="page-cta-title">Have a project in mind?</h2>
+            <p class="page-cta-description">
+                Let's collaborate to bring your vision to life with cutting-edge technology 
+                and creative solutions.
+            </p>
+            <div class="page-cta-buttons">
+                <a href="{{ route('contact') }}" class="btn btn-primary btn-large">Start a Project</a>
+                <a href="{{ route('about') }}" class="btn btn-secondary btn-large">Learn More About Me</a>
+            </div>
+        </div>
+    </div>
+</section>
 @endsection
