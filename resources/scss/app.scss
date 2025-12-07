@@ -2659,3 +2659,266 @@ footer.site-footer{
     }
 }
 
+// Contact Page Styles
+.contact-section {
+    padding: 8rem 0;
+    background: #fff;
+}
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 5rem;
+    align-items: start;
+}
+
+.contact-form-container {
+    .contact-form-header {
+        margin-bottom: 3rem;
+
+        h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: #000;
+        }
+
+        p {
+            font-size: 1.05rem;
+            color: #666;
+            line-height: 1.6;
+        }
+    }
+}
+
+.contact-alert {
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 2rem;
+    border-left: 4px solid;
+    font-size: 0.95rem;
+}
+
+.contact-alert-success {
+    background: #f0fdf4;
+    color: #166534;
+    border-left-color: #16a34a;
+}
+
+.contact-alert-error {
+    background: #fef2f2;
+    color: #991b1b;
+    border-left-color: #dc2626;
+
+    div {
+        margin-bottom: 0.25rem;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+}
+
+.contact-form {
+    .contact-form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .contact-form-group {
+        margin-bottom: 2rem;
+
+        label {
+            display: block;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #000;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #e0e0e0;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.2s;
+            background: #fff;
+
+            &:focus {
+                outline: none;
+                border-color: #000;
+                background: #fafafa;
+            }
+
+            &::placeholder {
+                color: #999;
+            }
+        }
+
+        textarea {
+            min-height: 180px;
+            resize: vertical;
+        }
+    }
+
+    .contact-submit-btn {
+        width: 100%;
+        padding: 1.25rem;
+        background: #000;
+        color: #fff;
+        border: none;
+        font-size: 1rem;
+        font-weight: 600;
+        font-family: inherit;
+        cursor: pointer;
+        transition: all 0.3s;
+
+        &:hover {
+            background: #333;
+        }
+    }
+}
+
+.contact-info-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.contact-info-card {
+    background: #fafafa;
+    padding: 2.5rem;
+    border: 1px solid #e0e0e0;
+
+    h3 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: #000;
+    }
+
+    p {
+        font-size: 1rem;
+        line-height: 1.7;
+        color: #666;
+        margin-bottom: 2rem;
+    }
+}
+
+.contact-info-items {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.contact-info-item {
+    display: flex;
+    gap: 1.25rem;
+    align-items: flex-start;
+}
+
+.contact-info-icon {
+    font-size: 1.75rem;
+    line-height: 1;
+}
+
+.contact-info-content {
+    flex: 1;
+}
+
+.contact-info-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+}
+
+.contact-info-link {
+    display: block;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #000;
+    text-decoration: none;
+    transition: color 0.2s;
+
+    &:hover {
+        color: #666;
+    }
+}
+
+// Contact Page Responsive
+@media (max-width: 968px) {
+    .contact-grid {
+        grid-template-columns: 1fr;
+        gap: 4rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .contact-section {
+        padding: 5rem 0;
+    }
+
+    .contact-form {
+        .contact-form-row {
+            grid-template-columns: 1fr;
+            gap: 0;
+        }
+    }
+
+    .contact-info-card {
+        padding: 2rem;
+    }
+
+    .contact-form-container .contact-form-header h2 {
+        font-size: 1.75rem;
+    }
+}
+
+.contact-cta{
+    background: #000;
+    color: #fff;
+    border-bottom: 1px solid #444;
+
+    .btn-primary{
+        background: #fff;
+        color: #000;
+        border-color: #fff;
+
+        &:hover {
+            background: transparent;
+            color: #fff;
+        }
+    }
+
+    .btn-secondary{
+        background: transparent;
+        color: #fff;
+        border-color: #fff;
+
+        &:hover {
+            background: #fff;
+            color: #000;
+        }
+    }
+
+    .cta-buttons{
+        display: flex;
+        gap: 1.5rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .cta-title{
+        font-size: clamp(2rem, 4vw, 3rem);
+        font-weight: 700;
+        line-height: 1.2;
+        letter-spacing: -1px;
+        margin-bottom: 1.5rem;
+    }
+}
